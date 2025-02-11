@@ -7,7 +7,7 @@ def gologin(request):
     return redirect('login')
 
 def login(request):
-    user = get_object_or_404(User,id=id)
+    user = get_object_or_404(User, id=idk)
     if request.method == "POST":
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
