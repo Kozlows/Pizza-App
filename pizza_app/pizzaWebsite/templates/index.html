@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form action="test">
-        <div>
-            <input type="text" placeholder="Input your Username Here.">
-            <input type="password" placeholder="Input your Password Here.">
-            <input type="submit" value="Log In">
-        </div>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
     </form>
 {% endblock %}
 
