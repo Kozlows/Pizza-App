@@ -27,39 +27,42 @@ class Topping(models.Model):
         return self.topping
 
 class Size(models.Model):
-    size = models.CharField(max_length=255, default="Medium")
+    size = models.CharField(max_length=255)
 
     def __str__(self):
         return self.size
 
 
 class Cheese(models.Model):
-    cheese = models.CharField(max_length=255, default="Mozzarella")
+    cheese = models.CharField(max_length=255)
 
     def __str__(self):
         return self.cheese
     
 class Sauce(models.Model):
-    sauce = models.CharField(max_length=255, default="Tomato Sauce")
+    sauce = models.CharField(max_length=255)
 
     def __str__(self):
         return self.sauce
     
 class Crust(models.Model):
-    crust = models.CharField(max_length=255, default="Normal")
+    crust = models.CharField(max_length=255)
     
     def __str__(self):
         return self.crust
+
+def findValue(className, default):
+    print(className.objects.filter())
 
 class Pizza(models.Model):
     size = models.ForeignKey(Size, on_delete=models.CASCADE)
     cheese = models.ForeignKey(Cheese, on_delete=models.CASCADE)
     sauce = models.ForeignKey(Sauce, on_delete=models.CASCADE)
     crust = models.ForeignKey(Crust, on_delete=models.CASCADE)
-    toppings = models.ManyToManyField(Topping, blank=True, default=None)
+    toppings = models.ManyToManyField(Topping, blank=True)
 
     def __str__(self):
-        return F"Size: {self.size}\nCheese: {self.cheese}\nSauce: {self.sauce}\nCrust: {self.crust}"
+        return F"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}"
 
 class Cart(models.Model):
-    pizzas = models.ManyToManyField(Pizza, blank=True, default=None)
+    pizzas = models.ManyToManyField(Pizza, blank=True)

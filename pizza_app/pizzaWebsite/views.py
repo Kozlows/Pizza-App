@@ -18,10 +18,9 @@ def home(request):
 def selection(request):
     if request.method == "POST":
         form = PizzaForm(request.POST)
-        #print(form)
         if form.is_valid():
             print("Validaf")
-            #form.save()
+            form.save()
             return redirect('cart')
         else:
             print("Not Valid")
@@ -31,7 +30,8 @@ def selection(request):
     return render(request, 'pizzaSelection.html', {"form" : form})
 
 def cart(request):
-    form = PizzaForm()
+    form = CartForm()
+    print(form)
     return render(request, 'cart.html', {"form": form})
 
 def payment(request):
