@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 
@@ -7,15 +7,7 @@ def gologin(request):
     return redirect('login')
 
 def login(request):
-    user = get_object_or_404(User, id=id)
-    if request.method == "POST":
-        form = UserForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = UserForm(instance=user)
-    return render(request, 'index.html', {"form": form})
+    return render(request, 'login.html')
 
 def signup(request):
     return render(request, 'accountCreation.html')
@@ -24,10 +16,23 @@ def home(request):
     return render(request, 'home.html')
 
 def selection(request):
-    return render(request, 'pizzaSelection.html')
+    if request.method == "POST":
+        form = PizzaForm(request.POST)
+        #print(form)
+        if form.is_valid():
+            print("Validaf")
+            #form.save()
+            return redirect('cart')
+        else:
+            print("Not Valid")
+    else:
+        form = PizzaForm()
+        print("Not POST")
+    return render(request, 'pizzaSelection.html', {"form" : form})
 
 def cart(request):
-    return render(request, 'cart.html')
+    form = PizzaForm()
+    return render(request, 'cart.html', {"form": form})
 
 def payment(request):
     return render(request, 'payment.html')

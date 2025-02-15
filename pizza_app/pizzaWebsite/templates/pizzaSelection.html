@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
-<a href="{% url 'cart' %}">Cart</a>
-<a href="{% url 'home' %}">Home</a>
-<a href="{% url 'login' %}">Sign Out</a>
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <a href="{% url 'cart' %}">Cart</a>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'login' %}">Sign Out</a>
+        {{form.as_p}}
+        <button>Submit</button>
+    </form>
+{% endblock %}
