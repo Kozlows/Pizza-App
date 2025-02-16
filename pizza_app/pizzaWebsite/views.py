@@ -16,7 +16,7 @@ def signout(request):
 
 def login(request):
     if request.user.is_authenticated:
-        redirect('home')
+        return redirect('home')
 
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -29,13 +29,14 @@ def login(request):
 
 def signup(request):
     if request.user.is_authenticated:
-        redirect('home')
+        return redirect('home')
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            authLogin(request, user)
+            return redirect('home')
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {"form" : form})
@@ -58,8 +59,8 @@ def selection(request):
 
 @login_required(login_url='/login/')
 def cart(request):
-    cart = Cart
-    pizzas = Cart.objects.all()  # Assuming pizzas is a ManyToManyField
+    userCart = Cart.objects.get(user=request.user)
+    pizzas = userCart.pizzas  # Assuming pizzas is a ManyToManyField
     print(pizzas)
     return render(request, 'cart.html', {"cart": cart, "pizzas": pizzas})
 
