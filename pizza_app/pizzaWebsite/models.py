@@ -1,6 +1,6 @@
 from site import check_enableusersite
 from django.db import models
-#import numpy
+from django.contrib.auth.models import User
 
 # Create your models here.
 # EVERY TIME YOU MODIFY THIS FILE YOU HAVE TO MIGRATE YOUR DATABASE
@@ -51,9 +51,6 @@ class Crust(models.Model):
     def __str__(self):
         return self.crust
 
-def findValue(className, default):
-    print(className.objects.filter())
-
 class Pizza(models.Model):
     size = models.ForeignKey(Size, on_delete=models.CASCADE)
     cheese = models.ForeignKey(Cheese, on_delete=models.CASCADE)
@@ -65,4 +62,5 @@ class Pizza(models.Model):
         return F"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}"
 
 class Cart(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     pizzas = models.ManyToManyField(Pizza, blank=True)

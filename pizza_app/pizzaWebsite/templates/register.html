@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block nav %}
     <li class="nav-item">
         <a class="nav-link" href="/login">Login</a>
@@ -11,9 +10,10 @@
 {% endblock %}
 
 {% block content %}
-<form action="" method="POST">
-    {% csrf_token %}
-    {{form}}
-    <button>Login</button>
-</form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form}}
+        <button>Register</button>
+    </form>
 {% endblock %}
+

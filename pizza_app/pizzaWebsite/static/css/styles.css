@@ -54,3 +54,15 @@ button.btn-pizza {
 button.btn-pizza:hover {
     background-color: #d62828;
 }
+
+ul.errorlist li{
+    color: #ff4d4d; /* Red color for errors */
+    background-color: #ffe6e6; /* Light red background for visibility */
+    border: 1px solid #ff1a1a; /* Darker red border */
+    padding: 10px;
+    border-radius: 5px;
+    list-style-type: none;
+    margin: 15px 0;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

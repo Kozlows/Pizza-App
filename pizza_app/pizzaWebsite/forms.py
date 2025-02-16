@@ -17,4 +17,3 @@ class CartForm(forms.ModelForm):
         model = Cart
         fields = ['pizzas']
 
-        
