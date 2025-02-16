@@ -11,5 +11,8 @@ class CheeseAdmin(admin.ModelAdmin):
 class SauceAdmin(admin.ModelAdmin):
     fields = ["sauce"]
 
+admin.site.register(Cart)
+admin.site.register(Pizza)
+
 
 

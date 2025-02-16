@@ -62,5 +62,5 @@ class Pizza(models.Model):
         return F"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}"
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     pizzas = models.ManyToManyField(Pizza, blank=True)

@@ -50,17 +50,18 @@ def selection(request):
     if request.method == "POST":
         form = PizzaForm(request.POST)
         if form.is_valid():
-            form.save()
+            pizza = form.save()
+            userCart = Cart.objects.get(user=request.user)
+            userCart.pizzas.add(pizza)
             return redirect('cart')
     else:
         form = PizzaForm()
-        print("Not POST")
     return render(request, 'pizzaSelection.html', {"form" : form})
 
 @login_required(login_url='/login/')
 def cart(request):
     userCart = Cart.objects.get(user=request.user)
-    pizzas = userCart.pizzas  # Assuming pizzas is a ManyToManyField
+    pizzas = userCart.pizzas.all()  # Assuming pizzas is a ManyToManyField
     print(pizzas)
     return render(request, 'cart.html', {"cart": cart, "pizzas": pizzas})
 
