@@ -1,6 +1,8 @@
 from site import check_enableusersite
 from django.db import models
 from django.contrib.auth.models import User
+from django.core import validators
+from datetime import datetime
 
 # Create your models here.
 # EVERY TIME YOU MODIFY THIS FILE YOU HAVE TO MIGRATE YOUR DATABASE
@@ -106,3 +108,12 @@ class Cart(models.Model):
                 if set(cartPizza.toppings.all()) == set(pizza.toppings.all()):    
                     return cartPizza.id
         return None
+
+class Payment(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    address = models.TextField()
+    card = models.CharField(max_length=16)
+    expiryMonth = models.IntegerField(default=1, validators=[validators.MinValueValidator(1), validators.MaxValueValidator(12)])
+    expiryYear = models.IntegerField(default=1, validators=[validators.MinValueValidator(datetime.today().year % 100), validators.MaxValueValidator((datetime.today().year + 10) % 100)])
+    cvv = models.CharField(max_length=3)

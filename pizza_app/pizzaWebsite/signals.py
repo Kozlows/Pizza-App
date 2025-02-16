@@ -7,3 +7,4 @@ from .models import *
 def create_cart_for_new_user(sender, instance, created, **kwargs):
     if created:
         Cart.objects.create(user=instance)
+        Payment.objects.create(user=instance)

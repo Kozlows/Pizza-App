@@ -1,4 +1,5 @@
 from django import forms
+from django.core import validators
 from .models import *
 
 class PizzaForm(forms.ModelForm):
@@ -17,10 +18,17 @@ class PizzaForm(forms.ModelForm):
         pizza.updatePrice()
         return pizza
 
+class PaymentForm(forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = ['name', 'address', 'card', 'expiryMonth', 'expiryYear', 'cvv']
+
+        widgets = {
+            'card': forms.TextInput(attrs={'pattern': '[0-9]{16}', 'title': '16 digits required', 'inputmode': 'numeric', 'max_length': 16}),
+            'cvv': forms.TextInput(attrs={'pattern': '[0-9]{3}', 'title': '3 digits required', 'inputmode': 'numeric', 'max_length': 3}),
+        }
 
 '''
-1. Complete Cart, aka make use of its form, and add features to add/remove to specific quantities of pizza, delete pizzas althogether, or edit them.
-1.1. Also add buttons to either go to payment or to make another pizza
 2. Make it so you can make the cart an order, empting the cart in the process, and showing the order on home page
 3. Making the payment page, where you have to input your card details to actually pay for the order.
 4. Setting up admin page as requested

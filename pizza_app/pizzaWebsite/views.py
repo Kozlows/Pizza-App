@@ -71,8 +71,20 @@ def cart(request):
 
 @login_required(login_url='/login/')
 def payment(request):
-    return render(request, 'payment.html')
+    if request.method == "POST":
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            userCart = Cart.objects.get(user=request.user)
+            render(request, 'completeOrder.html', {"form" : form, "cart" : userCart})
 
+    else:
+        form = PaymentForm()
+    return render(request, 'payment.html', {"form" : form})
+
+@login_required(login_url='/login/')
+def confirmation(request):
+    pass
 
 
 @login_required(login_url='/login/')
