@@ -2,7 +2,7 @@ from site import check_enableusersite
 from django.db import models
 from django.contrib.auth.models import User
 from django.core import validators
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create your models here.
 # EVERY TIME YOU MODIFY THIS FILE YOU HAVE TO MIGRATE YOUR DATABASE
@@ -90,12 +90,32 @@ class Pizza(models.Model):
         self.save()
 
     def __str__(self):
-        return F"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}"
+        s = f"<{', '.join([f"{topping}" for topping in self.toppings.all()])}>"
+        return f"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}, {s}"
+
+class Payment(models.Model):
+    name = models.CharField(max_length=50)
+    address = models.TextField()
+    card = models.CharField(max_length=16)
+    expiryMonth = models.IntegerField(default=1, validators=[validators.MinValueValidator(1), validators.MaxValueValidator(12)])
+    expiryYear = models.IntegerField(default=1, validators=[validators.MinValueValidator(datetime.today().year % 100), validators.MaxValueValidator((datetime.today().year + 10) % 100)])
+    cvv = models.CharField(max_length=3)
+
+class Order(models.Model):
+    pizzas = models.ManyToManyField(Pizza, blank=True)
+    ordered_at = models.DateTimeField(auto_now_add=True)
+    due = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        s = " --- ".join([f"{pizza}" for pizza in self.pizzas.all()])
+        return s
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     pizzas = models.ManyToManyField(Pizza, blank=True)
     price = models.FloatField(default=0.0)
+    paymentInfo = models.OneToOneField(Payment, null=True, blank=True, on_delete=models.CASCADE)
+    orders = models.ManyToManyField(Order, blank=True)
 
     def updatePrice(self):
         price = sum(pizza.total for pizza in self.pizzas.all())
@@ -108,12 +128,6 @@ class Cart(models.Model):
                 if set(cartPizza.toppings.all()) == set(pizza.toppings.all()):    
                     return cartPizza.id
         return None
-
-class Payment(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    address = models.TextField()
-    card = models.CharField(max_length=16)
-    expiryMonth = models.IntegerField(default=1, validators=[validators.MinValueValidator(1), validators.MaxValueValidator(12)])
-    expiryYear = models.IntegerField(default=1, validators=[validators.MinValueValidator(datetime.today().year % 100), validators.MaxValueValidator((datetime.today().year + 10) % 100)])
-    cvv = models.CharField(max_length=3)
+    
+    def clear_cart(self):
+        self.pizzas.clear()

@@ -1,1 +1,28 @@
 {% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Your Orders</h1>
+        <div class="order-list">
+            {% for order in orders %}
+                <div class="order-item">
+                    <p><strong>Order:</strong> {{ order }}</p>
+                    <p><strong>Will Arrive At:</strong> {{ order.due }}</p>
+                </div>
+            {% empty %}
+                <p>No orders available.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+<!--
+{% block acontent %}
+    <p>Orders:</p>
+    {% for order in orders%}
+            <p>{{order}}</p>
+            <p>Will Arrive At: {{order.due}}</p>
+
+    {% endfor %}
+{% endblock %}
+-->

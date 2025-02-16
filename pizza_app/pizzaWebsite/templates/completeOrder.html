@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+
+{% block content%}
+<div class="form-container">
+    <form action="" method="POST" class="styled-form">
+        {% csrf_token %}
+        <p><strong>Name:</strong> {{info.name}}</p>
+        <p><strong>Address:</strong> {{info.address}}</p>
+        <p><strong>Card:</strong> {{info.card}}</p>
+        <p><strong>Expiry Date:</strong> {{info.expiryMonth}}/{{info.expiryYear}}</p>
+        <p><strong>CVV:</strong> {{info.cvv}}</p>
+        <p><strong>Final Cost:</strong> €{{cart.price|floatformat:2}}</p>
+        <button class="submit-btn">Order; Total Cost: €{{ cart.price|floatformat:2 }}</button>
+    </form>
+</div>
+
+<div class="form-container">
+    <ul class="styled-form">
+        {% for pizza in pizzas %}
+            <li class="pizza-item">
+                <strong>Pizza ID: {{ pizza.id }}</strong><br>
+                <strong>Size:</strong> {{ pizza.size }}<br>
+                <strong>Cheese:</strong> {{ pizza.cheese }}<br>
+                <strong>Sauce:</strong> {{ pizza.sauce }}<br>
+                <strong>Crust:</strong> {{ pizza.crust }}<br>
+                <strong>Toppings:</strong> 
+                {% for topping in pizza.toppings.all %}
+                    {{ topping }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                <p><strong>Quantity:</strong> {{pizza.quantity}}</p>
+                <p><strong>Price:</strong> €{{ pizza.price|floatformat:2 }}</p>
+                <p><strong>Price of Quantity:</strong> €{{ pizza.total|floatformat:2 }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+<!--
+{% block acontent%}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <p>Name: {{info.name}}</p>
+        <p>Address: {{info.address}}</p>
+        <p>Card: {{info.card}}</p>
+        <p>Expiry Date: {{info.expiryMonth}}/{{info.expiryYear}}</p>
+        <p>CVV: {{info.cvv}}</p>
+        <p>Final Cost: {{cart.price|floatformat:2}}</p>
+        <button>Order; Total Cost: €{{ cart.price|floatformat:2 }}</button>
+    </form>
+
+    <ul>
+        {% for pizza in pizzas %}
+            <li>
+                <strong>Pizza ID: {{ pizza.id }}</strong><br>
+                Size: {{ pizza.size }}<br>
+                Cheese: {{ pizza.cheese }}<br>
+                Sauce: {{ pizza.sauce }}<br>
+                Crust: {{ pizza.crust }}<br>
+                Toppings: 
+                {% for topping in pizza.toppings.all %}
+                    {{ topping }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                <p>Quantity: {{pizza.quantity}}</p>
+                <p>Price: €{{ pizza.price|floatformat:2 }}</p>
+                <p>Price of Quantity: €{{ pizza.total|floatformat:2 }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+-->

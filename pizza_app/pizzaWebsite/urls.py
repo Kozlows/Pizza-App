@@ -10,6 +10,7 @@ urlpatterns = [
    path('cart/', views.cart, name="cart"),
    path('payment/', views.payment, name="payment"),
    path('signout/', views.signout, name="signout"),
+   path('confirmation/', views.confirmation, name="confirm"),
 
    path('increaseQuantity/<int:pizzaID>', views.increase, name="increase"),
    path('decreaseQuantity/<int:pizzaID>', views.decrease, name="decrease"),

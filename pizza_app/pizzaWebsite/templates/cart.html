@@ -1,9 +1,54 @@
 {% extends 'base.html' %}
 
 
-
-
 {% block content %}
+    <div class="form-container">
+        <h2 class="styled-form">Your Cart</h2>
+        {% if pizzas %}
+            <ul class="styled-form">
+                {% for pizza in pizzas %}
+                    <li class="pizza-item">
+                        <strong>Pizza ID:</strong> {{ pizza.id }}<br>
+                        <strong>Size:</strong> {{ pizza.size }}<br>
+                        <strong>Cheese:</strong> {{ pizza.cheese }}<br>
+                        <strong>Sauce:</strong> {{ pizza.sauce }}<br>
+                        <strong>Crust:</strong> {{ pizza.crust }}<br>
+                        <strong>Toppings:</strong> 
+                        {% for topping in pizza.toppings.all %}
+                            {{ topping }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        <p><strong>Quantity:</strong> {{pizza.quantity}}</p>
+                        <p><strong>Price:</strong> €{{ pizza.price|floatformat:2 }}</p>
+                        <p><strong>Actual Price:</strong> €{{ pizza.total|floatformat:2 }}</p>
+                        <form action="{% url 'increase' pizza.id %}" method="POST" class="inline-form">
+                            {% csrf_token %}
+                            <button class="submit-btn">+</button>
+                        </form>
+                        <form action="{% url 'decrease' pizza.id %}" method="POST" class="inline-form">
+                            {% csrf_token %}
+                            <button class="submit-btn">-</button>
+                        </form>
+                        <form action="{% url 'delete' pizza.id %}" method="POST" class="inline-form">
+                            {% csrf_token %}
+                            <button class="submit-btn">Remove Pizza From Cart</button>
+                        </form>
+                    </li>
+                {% endfor %}
+                <p class="styled-form"><strong>Total:</strong> €{{ cart.price|floatformat:2 }}</p>
+            </ul>
+            <form action="{% url 'payment' %}" method="POST" class="styled-form">
+                {% csrf_token %}
+                <button class="submit-btn">Pay Here</button>
+            </form>
+        {% else %}
+            <p class="styled-form">Your cart is empty!</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+<!--
+{% block acontent %}
     <h2>Your Cart</h2>
     {% if pizzas %}
         <ul>
@@ -19,8 +64,8 @@
                         {{ topping }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                     <p>Quantity: {{pizza.quantity}}</p>
-                    <p>Price: {{ pizza.price|floatformat:2 }}</p>
-                    <p>Actual Price: {{ pizza.total|floatformat:2 }}</p>
+                    <p>Price: €{{ pizza.price|floatformat:2 }}</p>
+                    <p>Actual Price: €{{ pizza.total|floatformat:2 }}</p>
                     <form action="{% url 'increase' pizza.id %}" method="POST">
                         {% csrf_token %}
                         <button>+</button>
@@ -35,7 +80,7 @@
                     </form>
                 </li>
             {% endfor %}
-            <p>Total: {{ cart.price|floatformat:2 }}</p>
+            <p>Total: €{{ cart.price|floatformat:2 }}</p>
         </ul>
         <form action="{% url 'payment' %}" method="POST">
             {% csrf_token %}
@@ -45,3 +90,4 @@
         <p>Your cart is empty!</p>
     {% endif %}
 {% endblock %}
+-->

@@ -43,7 +43,14 @@ def signup(request):
 
 @login_required(login_url='/login/')
 def home(request):
-    return render(request, 'home.html')
+    userCart = Cart.objects.get(user=request.user)
+    orders = userCart.orders.all()
+    for order in orders:
+        order.due = order.ordered_at + timedelta(hours=2)
+        if order.due <= datetime.now(order.due.tzinfo):  # AKA it has been delivered
+            order.delete()
+
+    return render(request, 'home.html', {"orders" : orders})
 
 @login_required(login_url='/login/')
 def selection(request):
@@ -71,20 +78,41 @@ def cart(request):
 
 @login_required(login_url='/login/')
 def payment(request):
+    userCart = Cart.objects.get(user=request.user)
     if request.method == "POST":
         form = PaymentForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            userCart = Cart.objects.get(user=request.user)
-            render(request, 'completeOrder.html', {"form" : form, "cart" : userCart})
+            paymentInfo = form.save()
+            userCart.paymentInfo = paymentInfo
+            userCart.save()
+            return redirect('confirm')
 
+    if userCart.paymentInfo != None:
+        form = PaymentForm(instance=userCart.paymentInfo)
     else:
         form = PaymentForm()
+    print(userCart.paymentInfo != None)
     return render(request, 'payment.html', {"form" : form})
 
 @login_required(login_url='/login/')
 def confirmation(request):
-    pass
+    userCart = Cart.objects.get(user=request.user)
+    if request.method == "POST":
+        new_order = Order.objects.create()
+        
+        # Copy all pizzas from the cart into the new order
+        new_order.pizzas.set(userCart.pizzas.all())
+        
+        # Add the new order to the user's cart
+        userCart.orders.add(new_order)
+
+        userCart.clear_cart()
+        userCart.save()
+        return redirect("home")
+
+    return render(request, 'completeOrder.html', {"info" : userCart.paymentInfo, "cart" : userCart, "pizzas" : userCart.pizzas.all()})
+
 
 
 @login_required(login_url='/login/')

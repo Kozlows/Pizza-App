@@ -1,6 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="form-container">
+        <div class="styled-form">
+            <h2>Submit Your Order</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                
+                <!-- Render form fields as styled blocks -->
+                {{ form.as_p }}
+                
+                {% if pizzaID %}
+                    <input type="hidden" name="pizzaID" value="{{ pizzaID }}">
+                {% endif %}
+                
+                <button class="submit-btn" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+<!--
+
+{% block acontent %}
     <form action="" method="POST">
         {% csrf_token %}
         {{form.as_p}}
@@ -10,3 +31,4 @@
         <button>Submit</button>
     </form>
 {% endblock %}
+-->
