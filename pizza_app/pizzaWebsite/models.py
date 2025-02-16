@@ -21,35 +21,40 @@ from django.contrib.auth.models import User
 
     
 class Topping(models.Model):
-    topping = models.CharField(max_length=255)
+    part = models.CharField(max_length=255)
+    price = models.FloatField()
 
     def __str__(self):
-        return self.topping
+        return self.part
 
 class Size(models.Model):
-    size = models.CharField(max_length=255)
+    part = models.CharField(max_length=255)
+    price = models.FloatField()
 
     def __str__(self):
-        return self.size
+        return self.part
 
 
 class Cheese(models.Model):
-    cheese = models.CharField(max_length=255)
+    part = models.CharField(max_length=255)
+    price = models.FloatField()
 
     def __str__(self):
-        return self.cheese
+        return self.part
     
 class Sauce(models.Model):
-    sauce = models.CharField(max_length=255)
+    part = models.CharField(max_length=255)
+    price = models.FloatField()
 
     def __str__(self):
-        return self.sauce
+        return self.part
     
 class Crust(models.Model):
-    crust = models.CharField(max_length=255)
+    part = models.CharField(max_length=255)
+    price = models.FloatField()
     
     def __str__(self):
-        return self.crust
+        return self.part
 
 class Pizza(models.Model):
     size = models.ForeignKey(Size, on_delete=models.CASCADE)
@@ -57,6 +62,23 @@ class Pizza(models.Model):
     sauce = models.ForeignKey(Sauce, on_delete=models.CASCADE)
     crust = models.ForeignKey(Crust, on_delete=models.CASCADE)
     toppings = models.ManyToManyField(Topping, blank=True)
+    price = models.FloatField(default=0.0)
+    quantity = models.IntegerField(default=1)
+    total = models.FloatField(default=0.0)
+
+    def updatePrice(self):
+        basePrice = sum((self.size.price, self.cheese.price, self.sauce.price, self.crust.price))
+        self.price = basePrice + sum(topping.price for topping in self.toppings.all())
+        self.updateTotal()
+        self.save()
+
+    def updateTotal(self):
+        self.total = self.price * self.quantity
+
+    def addExtra(self):
+        self.quantity += 1
+        self.updateTotal()
+        self.save()
 
     def __str__(self):
         return F"Size: {self.size}, Cheese: {self.cheese}, Sauce: {self.sauce}, Crust: {self.crust}"
@@ -64,3 +86,16 @@ class Pizza(models.Model):
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     pizzas = models.ManyToManyField(Pizza, blank=True)
+    price = models.FloatField(default=0.0)
+
+    def updatePrice(self):
+        price = sum(pizza.total for pizza in self.pizzas.all())
+        self.price = price
+        self.save()
+
+    def hasPizza(self, pizza):
+        for cartPizza in self.pizzas.all():
+            if cartPizza.size == pizza.size and cartPizza.cheese == pizza.cheese and cartPizza.sauce == pizza.sauce and cartPizza.crust == pizza.crust:
+                if set(cartPizza.toppings.all()) == set(pizza.toppings.all()):    
+                    return cartPizza.id
+        return None

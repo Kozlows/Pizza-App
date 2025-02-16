@@ -52,7 +52,12 @@ def selection(request):
         if form.is_valid():
             pizza = form.save()
             userCart = Cart.objects.get(user=request.user)
-            userCart.pizzas.add(pizza)
+            otherPizzaID = userCart.hasPizza(pizza)
+            if not otherPizzaID:
+                userCart.pizzas.add(pizza)
+            else:
+                userCart.pizzas.get(id=otherPizzaID).addExtra()
+            userCart.updatePrice()
             return redirect('cart')
     else:
         form = PizzaForm()
@@ -61,9 +66,8 @@ def selection(request):
 @login_required(login_url='/login/')
 def cart(request):
     userCart = Cart.objects.get(user=request.user)
-    pizzas = userCart.pizzas.all()  # Assuming pizzas is a ManyToManyField
-    print(pizzas)
-    return render(request, 'cart.html', {"cart": cart, "pizzas": pizzas})
+    pizzas = userCart.pizzas.all()
+    return render(request, 'cart.html', {"pizzas": pizzas, "cart" : userCart})
 
 @login_required(login_url='/login/')
 def payment(request):

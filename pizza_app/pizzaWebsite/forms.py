@@ -12,6 +12,11 @@ class PizzaForm(forms.ModelForm):
         required = False
     )
 
+    def save(self):
+        pizza = super().save()
+        pizza.updatePrice()
+        return pizza
+
 class CartForm(forms.ModelForm):
     class Meta:
         model = Cart
