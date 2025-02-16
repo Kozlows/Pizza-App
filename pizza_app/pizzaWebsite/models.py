@@ -75,6 +75,13 @@ class Pizza(models.Model):
     def updateTotal(self):
         self.total = self.price * self.quantity
 
+    def minusExtra(self):
+        self.quantity -= 1
+        if self.quantity <= 0:
+            self.delete()
+        self.updateTotal()
+        self.save()
+
     def addExtra(self):
         self.quantity += 1
         self.updateTotal()

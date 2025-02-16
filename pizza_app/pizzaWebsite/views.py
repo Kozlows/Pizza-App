@@ -74,3 +74,32 @@ def payment(request):
     return render(request, 'payment.html')
 
 
+
+@login_required(login_url='/login/')
+def increase(request, pizzaID):
+    if request.method == "POST":
+        userCart = Cart.objects.get(user=request.user)
+        pizza = userCart.pizzas.get(id=pizzaID)
+        pizza.addExtra()
+        userCart.updatePrice()
+    return redirect('cart')
+
+@login_required(login_url='/login/')
+def decrease(request, pizzaID):
+    if request.method == "POST":
+        userCart = Cart.objects.get(user=request.user)
+        pizza = userCart.pizzas.get(id=pizzaID)
+        pizza.minusExtra()
+        userCart.updatePrice()
+    return redirect('cart')
+
+
+
+@login_required(login_url='/login/')
+def delete(request, pizzaID):
+    if request.method == "POST":
+        userCart = Cart.objects.get(user=request.user)
+        pizza = userCart.pizzas.get(id=pizzaID)
+        pizza.delete()
+        userCart.updatePrice()
+    return redirect('cart')

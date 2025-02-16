@@ -4,6 +4,9 @@
     <form action="" method="POST">
         {% csrf_token %}
         {{form.as_p}}
+        {% if pizzaID %}
+            <input type="hidden" name="pizzaID" value="{{ pizzaID }}">
+        {% endif %}
         <button>Submit</button>
     </form>
 {% endblock %}

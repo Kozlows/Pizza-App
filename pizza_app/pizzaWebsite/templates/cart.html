@@ -2,6 +2,7 @@
 
 
 
+
 {% block content %}
     <h2>Your Cart</h2>
     {% if pizzas %}
@@ -20,10 +21,26 @@
                     <p>Quantity: {{pizza.quantity}}</p>
                     <p>Price: {{ pizza.price|floatformat:2 }}</p>
                     <p>Actual Price: {{ pizza.total|floatformat:2 }}</p>
+                    <form action="{% url 'increase' pizza.id %}" method="POST">
+                        {% csrf_token %}
+                        <button>+</button>
+                    </form>
+                    <form action="{% url 'decrease' pizza.id %}" method="POST">
+                        {% csrf_token %}
+                        <button>-</button>
+                    </form>
+                    <form action="{% url 'delete' pizza.id %}" method="POST">
+                        {% csrf_token %}
+                        <button>Remove Pizza From Cart</button>
+                    </form>
                 </li>
             {% endfor %}
             <p>Total: {{ cart.price|floatformat:2 }}</p>
         </ul>
+        <form action="{% url 'payment' %}" method="POST">
+            {% csrf_token %}
+            <button>Pay Here</button>
+        </form>
     {% else %}
         <p>Your cart is empty!</p>
     {% endif %}
